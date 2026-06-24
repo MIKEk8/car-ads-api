@@ -11,7 +11,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 # Сначала зависимости — кешируется отдельным слоем.
-COPY composer.json ./
+COPY composer.json composer.lock ./
 RUN composer install --no-interaction --no-progress --prefer-dist --no-dev
 
 COPY . .

@@ -1,0 +1,9 @@
+.git/
+vendor/
+runtime/*
+!runtime/.gitkeep
+.phpunit.cache/
+.phpunit.result.cache
+.idea/
+.vscode/
+*.log
