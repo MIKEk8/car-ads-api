@@ -1,0 +1,11 @@
+/vendor/
+/runtime/*
+!/runtime/.gitkeep
+/web/assets/*
+!/web/assets/.gitkeep
+.phpunit.cache/
+.phpunit.result.cache
+.env
+.idea/
+.vscode/
+*.log
