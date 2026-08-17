@@ -15,8 +15,26 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'app\\Controller',
     'container' => $container,
+    // Логгер поднимается до обработки запроса, иначе ранние ошибки минуют его.
+    'bootstrap' => ['log'],
     'components' => [
         'db' => $db,
+        // Клиенту про внутренние ошибки не сообщается ничего (см. errorHandler
+        // и YII_DEBUG), но где-то след остаться обязан — иначе инцидент в
+        // проде нечем разбирать. Проверено: без этого компонента падение
+        // коннекта к БД не оставляло вообще никакой диагностики.
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => \yii\log\FileTarget::class,
+                    'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/app.log',
+                    // 4xx — это ошибки клиента, а не инциденты сервиса.
+                    'except' => ['yii\web\HttpException:4*'],
+                ],
+            ],
+        ],
         // Нужен для enableSchemaCache: без него настройка молча не работала бы.
         'cache' => [
             'class' => \yii\caching\FileCache::class,

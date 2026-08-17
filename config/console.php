@@ -11,8 +11,21 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'app\\commands',
     'container' => $container,
+    'bootstrap' => ['log'],
     'components' => [
         'db' => $db,
+        // Тот же журнал, что и у web-приложения: ошибки миграций тоже должны
+        // оставлять след, а не только печататься в консоль.
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => \yii\log\FileTarget::class,
+                    'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/console.log',
+                ],
+            ],
+        ],
         // Тот же компонент, что и в web-конфигурации: db.php ссылается на него
         // через enableSchemaCache и должен находить его в обоих приложениях.
         'cache' => [
