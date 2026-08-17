@@ -7,10 +7,12 @@ namespace app\Controller;
 use app\Entity\Car;
 use app\Exception\ValidationException;
 use app\Service\CarService;
+use app\Web\MediaType;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
+use yii\web\UnsupportedMediaTypeHttpException;
 
 /**
  * REST-контроллер объявлений автомобилей.
@@ -24,6 +26,9 @@ use yii\web\Response;
  */
 final class CarController extends Controller
 {
+    /** Единственный тип тела, который принимает API. */
+    private const JSON_MEDIA_TYPE = 'application/json';
+
     public $enableCsrfValidation = false;
 
     public function __construct(
@@ -35,8 +40,32 @@ final class CarController extends Controller
         parent::__construct($id, $module, $config);
     }
 
+    /**
+     * Правила в urlManager намеренно не привязаны к методу: сюда доходит любой
+     * запрос по адресу, а VerbFilter отвечает 405 с заголовком Allow. Иначе
+     * `GET /car/create` выглядел бы как несуществующий адрес (404).
+     */
+    public function behaviors(): array
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['POST'],
+                    'view' => ['GET', 'HEAD'],
+                    'list' => ['GET', 'HEAD'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @throws UnsupportedMediaTypeHttpException
+     */
     public function actionCreate(): array
     {
+        $this->assertJsonRequest();
+
         $data = Yii::$app->request->getBodyParams();
 
         try {
@@ -83,6 +112,27 @@ final class CarController extends Controller
     }
 
     /**
+     * Тело принимается только как application/json.
+     *
+     * Без этой проверки запрос с чужим Content-Type уходит в разбор $_POST:
+     * JSON-тело теряется целиком, и клиент получает 422 «поле title
+     * обязательно» — сообщение, уводящее от настоящей причины. Заодно
+     * закрывается приём form-urlencoded, которого у JSON-API быть не должно.
+     *
+     * @throws UnsupportedMediaTypeHttpException
+     */
+    private function assertJsonRequest(): void
+    {
+        $contentType = MediaType::extract((string)Yii::$app->request->getContentType());
+
+        if ($contentType !== self::JSON_MEDIA_TYPE) {
+            throw new UnsupportedMediaTypeHttpException(
+                'Тело запроса должно передаваться с Content-Type: application/json.'
+            );
+        }
+    }
+
+    /**
      * @return array<string,mixed>
      */
     private function serializeCar(Car $car): array
@@ -91,6 +141,9 @@ final class CarController extends Controller
             'id' => $car->id,
             'title' => $car->title,
             'description' => $car->description,
+            // По ТЗ price — число. Точность при этом не страдает: сервис уже
+            // ограничил цену диапазоном numeric(12,2), а такие значения float
+            // представляет без потери значащих знаков.
             'price' => (float)$car->price,
             'photo_url' => $car->photoUrl,
             'contacts' => $car->contacts,

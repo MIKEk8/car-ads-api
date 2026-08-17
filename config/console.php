@@ -13,6 +13,11 @@ return [
     'container' => $container,
     'components' => [
         'db' => $db,
+        // Тот же компонент, что и в web-конфигурации: db.php ссылается на него
+        // через enableSchemaCache и должен находить его в обоих приложениях.
+        'cache' => [
+            'class' => \yii\caching\FileCache::class,
+        ],
     ],
     'controllerMap' => [
         'migrate' => [
