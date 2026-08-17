@@ -137,4 +137,86 @@ final class CarServiceTest extends TestCase
         $this->expectException(ValidationException::class);
         $this->makeService()->create($payload);
     }
+
+    public function testCreateNormalizesDecimalPriceFromString(): void
+    {
+        $payload = $this->validPayload();
+        $payload['price'] = '1250000.5';
+
+        $repo = $this->createMock(CarRepositoryInterface::class);
+        $repo->expects($this->once())->method('save')->willReturnArgument(0);
+
+        $car = $this->makeService($repo)->create($payload);
+
+        // Дробная часть дополняется до scale колонки, а не пересчитывается.
+        self::assertSame('1250000.50', $car->price);
+    }
+
+    public function testCreateRejectsPriceWithExtraDecimalsInsteadOfRounding(): void
+    {
+        $payload = $this->validPayload();
+        $payload['price'] = '100.999';
+
+        try {
+            $this->makeService()->create($payload);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            // Молча округлить сумму хуже, чем отказать: клиент должен узнать,
+            // что переданное значение не может быть сохранено как есть.
+            self::assertArrayHasKey('price', $e->getErrors());
+        }
+    }
+
+    public function testCreateRejectsExponentialPrice(): void
+    {
+        $payload = $this->validPayload();
+        $payload['price'] = '1e6';
+
+        $this->expectException(ValidationException::class);
+        $this->makeService()->create($payload);
+    }
+
+    public function testCreateRejectsYearBeyondNextCalendarYear(): void
+    {
+        $payload = $this->validPayload();
+        $payload['options']['year'] = (int)date('Y') + 5;
+
+        try {
+            $this->makeService()->create($payload);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            self::assertArrayHasKey('options.year', $e->getErrors());
+        }
+    }
+
+    public function testCreateRejectsNestedArrayInOptionField(): void
+    {
+        $payload = $this->validPayload();
+        $payload['options']['brand'] = ['BMW'];
+
+        try {
+            $this->makeService()->create($payload);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            // Иначе массив дошёл бы до приведения (string) и стал строкой «Array».
+            self::assertArrayHasKey('options.brand', $e->getErrors());
+        }
+    }
+
+    public function testCreateCollectsAllErrorsAtOnce(): void
+    {
+        try {
+            $this->makeService()->create(['options' => ['year' => 'нет']]);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+
+            // Валидация не должна прерываться на первом промахе.
+            self::assertArrayHasKey('title', $errors);
+            self::assertArrayHasKey('price', $errors);
+            self::assertArrayHasKey('contacts', $errors);
+            self::assertArrayHasKey('options.brand', $errors);
+            self::assertArrayHasKey('options.year', $errors);
+        }
+    }
 }
