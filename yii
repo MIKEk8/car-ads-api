@@ -7,10 +7,14 @@ declare(strict_types=1);
  * Yii2 console-приложение (миграции, встроенный сервер php yii serve).
  */
 
-defined('YII_DEBUG') or define('YII_DEBUG', (bool)(getenv('YII_DEBUG') ?: true));
-defined('YII_ENV') or define('YII_ENV', getenv('YII_ENV') ?: 'console');
-
+// Порядок как в web/index.php: автозагрузчик → константы → Yii.php.
 require __DIR__ . '/vendor/autoload.php';
+
+use app\Env;
+
+defined('YII_DEBUG') or define('YII_DEBUG', Env::bool('YII_DEBUG', true));
+defined('YII_ENV') or define('YII_ENV', Env::string('YII_ENV', 'console'));
+
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
 $config = require __DIR__ . '/config/console.php';

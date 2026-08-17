@@ -21,6 +21,8 @@ services:
       DB_DSN: "pgsql:host=db;port=5432;dbname=cars"
       DB_USER: postgres
       DB_PASSWORD: postgres
+      # Значение читается через app\Env::bool, поэтому "0" действительно
+      # выключает debug — вместе с ним включается кеш схемы БД.
       YII_DEBUG: "1"
       YII_ENV: dev
     ports:
