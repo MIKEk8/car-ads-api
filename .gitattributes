@@ -1,0 +1,12 @@
+# Нормализация переводов строк в репозитории — чтобы клон на Windows и на
+# Linux давал одинаковые файлы независимо от настройки core.autocrlf.
+* text=auto
+
+# Точка входа консольного приложения запускается через shebang: CRLF в первой
+# строке ломает `#!/usr/bin/env php` на Linux.
+yii text eol=lf
+
+*.php text eol=lf
+*.sh  text eol=lf
+*.yml text eol=lf
+*.md  text eol=lf
