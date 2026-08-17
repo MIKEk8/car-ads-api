@@ -96,7 +96,7 @@ DI настраивается в `config/container.php`: интерфейс `Car
 | `400` | битый JSON в теле или нечисловой `?page` |
 | `404` | объявление не найдено либо неизвестный адрес |
 | `405` | метод не разрешён для адреса (в ответе есть заголовок `Allow`) |
-| `415` | тело передано без `Content-Type: application/json` |
+| `415` | тело передано не с `Content-Type: application/json` |
 | `422` | ошибка валидации, в ответе карта `errors` по полям |
 
 Все ответы, включая ошибки, — в JSON.
@@ -124,8 +124,8 @@ PostgreSQL, две таблицы:
 ## Запуск через Docker (рекомендуется)
 
 ```bash
-git clone <url-репозитория>
-cd car-api
+git clone https://github.com/MIKEk8/car-ads-api.git
+cd car-ads-api
 docker compose up --build
 ```
 
@@ -136,8 +136,8 @@ docker compose up --build
 
 ```bash
 # 1. Клонировать и установить зависимости
-git clone <url-репозитория>
-cd car-api
+git clone https://github.com/MIKEk8/car-ads-api.git
+cd car-ads-api
 composer install
 
 # 2. Настроить PostgreSQL (создать БД `cars`) и параметры подключения.
@@ -162,13 +162,19 @@ php yii serve 127.0.0.1:8099 --docroot=web
 
 ## Тесты
 
-Unit-тесты слоя Service (создание объявления, без обращения к БД):
+Unit-тесты, БД не требуется — репозиторий мокается:
 
 ```bash
 composer test
 # или
 vendor/bin/phpunit
 ```
+
+| Файл | Что проверяет |
+|------|---------------|
+| `tests/unit/CarServiceTest.php` | создание объявления в слое Service: три состояния `options`, нормализация цены, сбор всех ошибок сразу |
+| `tests/unit/CarSchemaCoverageTest.php` | что у каждого ограничения из `CarSchema` есть вход, отбиваемый как `422`, и что до хранилища такой запрос не доходит |
+| `tests/unit/MediaTypeTest.php` | нормализацию `Content-Type` во всех начертаниях, допустимых по RFC 7231 |
 
 ## Примеры запросов (curl)
 
