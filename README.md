@@ -20,7 +20,7 @@ HTTP  →  Controller  →  Form  →  Service  →  Repository (interface)  →
 | **Entity** | Чистые доменные объекты (POPO) | `src/Entity/Car.php`, `src/Entity/CarOption.php` |
 | **DataMapper** | Перенос данных Entity ↔ таблица (без ActiveRecord) | `src/Mapper/*` |
 | **Repository** | Контракт хранилища + реализация, транзакции | `src/Repository/*` |
-| **Form** | Приём и проверка данных запроса | `src/Form/CarCreateForm.php`, `CarOptionForm.php` |
+| **Form** | Приём и проверка данных запроса | `src/Form/*` |
 | **Service** | Бизнес-логика, оркестрация | `src/Service/CarService.php` |
 | **Controller** | Разбор HTTP-запроса и сериализация в JSON | `src/Controller/CarController.php` |
 
