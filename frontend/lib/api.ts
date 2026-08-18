@@ -115,6 +115,23 @@ export function fetchCar(id: number): Promise<Car> {
     return request<Car>(`/car/${encodeURIComponent(id)}`);
 }
 
+/**
+ * Характеристики в запросе на создание — строками, как их ввёл пользователь.
+ *
+ * Числовые поля намеренно НЕ приводятся к number на клиенте. Пока форма делала
+ * `parseInt`, ввод «35 000» — привычная русская запись пробега — молча
+ * превращался в 35, и объявление сохранялось с кодом 201. Ошибку никто не
+ * видел: приведение съедало её раньше, чем данные доходили до проверки.
+ * Строка доходит до бэкенда как есть и получает внятный отказ.
+ */
+export interface CarOptionInput {
+    brand: string;
+    model: string;
+    year: string;
+    body: string;
+    mileage: string;
+}
+
 /** Тело запроса на создание — ровно то, что описано в ТЗ. */
 export interface CreateCarInput {
     title: string;
@@ -122,7 +139,7 @@ export interface CreateCarInput {
     price: string;
     photo_url: string | null;
     contacts: string;
-    options: CarOption | null;
+    options: CarOptionInput | null;
 }
 
 export function createCar(input: CreateCarInput): Promise<Car> {

@@ -31,15 +31,19 @@ export async function createCarAction(_prev: FormState, formData: FormData): Pro
         // Пустое поле — это «фотографии нет», а не пустая строка в базе.
         photo_url: values.photo_url ? values.photo_url : null,
         contacts: values.contacts ?? '',
+        // Числа не приводятся: значения уходят строками, как их ввёл
+        // пользователь. Приведение здесь было бы ещё одним правилом на
+        // клиенте — причём молчаливым. Замерено на проде: `parseInt` делал из
+        // «35 000» число 35, объявление сохранялось с кодом 201 и пробегом
+        // 35 км, и об ошибке не узнавал никто. Теперь строку судит бэкенд,
+        // единственный источник правил, и отвечает «должно быть целым числом».
         options: withOptions
             ? {
                   brand: values.brand ?? '',
                   model: values.model ?? '',
-                  // Приводим к числу: бэкенд принимает и строку, но контракт
-                  // в TypeScript описан числом, и нарушать его не будем.
-                  year: Number.parseInt(values.year ?? '', 10) || 0,
+                  year: values.year ?? '',
                   body: values.body ?? '',
-                  mileage: Number.parseInt(values.mileage ?? '', 10) || 0,
+                  mileage: values.mileage ?? '',
               }
             : null,
     };

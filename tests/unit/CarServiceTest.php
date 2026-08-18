@@ -203,6 +203,74 @@ final class CarServiceTest extends TestCase
         }
     }
 
+    /**
+     * Регрессия, найденная сравнением поведения до и после выделения формы.
+     *
+     * Пустой объект options создавал объявление без характеристик и отвечал
+     * 201 вместо 422. Причина общая для всего класса: у inline-валидаторов Yii
+     * `skipOnEmpty` по умолчанию true, а пустой массив считается пустым
+     * значением — правило просто не вызывалось. Тест держит `skipOnEmpty` на
+     * месте: без него снова пропускался бы объект без единого поля.
+     */
+    public function testCreateWithEmptyOptionsObjectRequiresEveryField(): void
+    {
+        $payload = $this->validPayload();
+        $payload['options'] = [];
+
+        $repo = $this->createMock(CarRepositoryInterface::class);
+        $repo->expects($this->never())->method('save');
+
+        try {
+            $this->makeService($repo)->create($payload);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            self::assertSame(
+                ['options.brand', 'options.model', 'options.year', 'options.body', 'options.mileage'],
+                array_keys($e->getErrors()),
+            );
+        }
+    }
+
+    /**
+     * Регрессия оттуда же: {attribute} подставляет метку атрибута, а Yii
+     * генерирует её из имени свойства — сообщения превращались в «Поле Title
+     * обязательно». Клиенту сообщают о поле JSON, значит и называть его надо
+     * так, как оно передаётся. Тест сторожит attributeLabels() в обеих формах.
+     */
+    public function testValidationMessagesNameFieldsAsTheRequestDoes(): void
+    {
+        try {
+            $this->makeService()->create(['options' => []]);
+            self::fail('Ожидалось ValidationException');
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+
+            self::assertStringContainsString('Поле title ', $errors['title']);
+            self::assertStringContainsString('Поле contacts ', $errors['contacts']);
+            self::assertStringContainsString('Поле options.brand ', $errors['options.brand']);
+        }
+    }
+
+    /**
+     * И третья: пустая строка в photo_url — это не «фотографии нет».
+     * Различие видно в базе (пустая строка против NULL), поэтому форма не
+     * вправе подменять одно другим по дороге.
+     */
+    public function testCreateKeepsEmptyPhotoUrlDistinctFromMissingOne(): void
+    {
+        $repo = $this->createMock(CarRepositoryInterface::class);
+        $repo->expects($this->exactly(2))->method('save')->willReturnArgument(0);
+        $service = $this->makeService($repo);
+
+        $withEmpty = $this->validPayload();
+        $withEmpty['photo_url'] = '';
+        self::assertSame('', $service->create($withEmpty)->photoUrl);
+
+        $without = $this->validPayload();
+        unset($without['photo_url']);
+        self::assertNull($service->create($without)->photoUrl);
+    }
+
     public function testCreateCollectsAllErrorsAtOnce(): void
     {
         try {
