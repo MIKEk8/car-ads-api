@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+    /**
+     * Сборка в самодостаточный сервер: в образ попадают только реально
+     * использованные модули, а не весь node_modules. Для контейнера это
+     * разница на порядок в размере.
+     */
+    output: 'standalone',
 };
 
 export default nextConfig;
