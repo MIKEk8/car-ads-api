@@ -1,0 +1,74 @@
+.header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.bar {
+    max-width: var(--page);
+    margin: 0 auto;
+    padding: 0.85rem clamp(1rem, 4vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 650;
+    font-size: 1.05rem;
+    letter-spacing: -0.015em;
+}
+
+/* Знак — не эмодзи, а простая геометрия: полоса приборной подсветки. */
+.mark {
+    width: 1.15rem;
+    height: 0.4rem;
+    border-radius: 1px;
+    background: var(--accent);
+    box-shadow: 0 0.28rem 0 -0.08rem var(--rule);
+}
+
+.cta {
+    background: var(--accent);
+    color: var(--accent-on);
+    padding: 0.5rem 0.95rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+}
+
+.cta:hover {
+    background: var(--accent-hover);
+}
+
+.main {
+    max-width: var(--page);
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 4vw, 2rem) 4rem;
+    min-height: 60vh;
+}
+
+.footer {
+    border-top: 1px solid var(--rule);
+    background: var(--surface);
+}
+
+.footerInner {
+    max-width: var(--page);
+    margin: 0 auto;
+    padding: 1.25rem clamp(1rem, 4vw, 2rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+    justify-content: space-between;
+    color: var(--ink-3);
+    font-size: 0.82rem;
+}

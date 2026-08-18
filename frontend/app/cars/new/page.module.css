@@ -1,0 +1,179 @@
+.page {
+    max-width: 44rem;
+}
+
+.head {
+    margin-bottom: 1.75rem;
+}
+
+.title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 660;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--ink-2);
+    font-size: 0.92rem;
+    max-width: 58ch;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: clamp(1.1rem, 4vw, 1.85rem);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.required {
+    color: var(--accent);
+}
+
+.control {
+    font: inherit;
+    color: var(--ink);
+    background: var(--ground);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 0.55rem 0.7rem;
+    width: 100%;
+    transition: border-color 0.15s ease;
+}
+
+.control:hover {
+    border-color: var(--ink-3);
+}
+
+.control:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Ошибка помечена не только цветом: рамка заметно толще, и рядом всегда
+   есть текст. Опираться на один цвет нельзя. */
+.controlError {
+    border-color: var(--danger);
+    border-width: 2px;
+}
+
+.hint {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+}
+
+.error {
+    font-size: 0.82rem;
+    color: var(--danger);
+    font-weight: 500;
+}
+
+.alert {
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius);
+    padding: 0.7rem 0.9rem;
+    color: var(--danger);
+    font-size: 0.9rem;
+}
+
+.fieldset {
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.legend {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    padding: 0 0.4rem;
+}
+
+.toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+}
+
+.toggle input {
+    margin-top: 0.25rem;
+    accent-color: var(--accent);
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+}
+
+.toggleHint {
+    display: block;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    margin-top: 0.15rem;
+}
+
+.optionGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+    gap: 0.9rem;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 0.35rem;
+}
+
+.submit {
+    font: inherit;
+    font-weight: 600;
+    background: var(--accent);
+    color: var(--accent-on);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+    background: var(--accent-hover);
+}
+
+.submit:disabled {
+    opacity: 0.65;
+    cursor: progress;
+}
+
+.cancel {
+    color: var(--ink-2);
+    font-size: 0.9rem;
+}
+
+.cancel:hover {
+    color: var(--accent);
+}

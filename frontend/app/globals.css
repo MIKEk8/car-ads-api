@@ -1,0 +1,144 @@
+/*
+ * Дизайн-токены и базовые стили.
+ *
+ * Тема учитывает три состояния: явный выбор пользователя (data-theme),
+ * системная настройка (prefers-color-scheme) и отсутствие обеих. Поэтому
+ * полная светлая палитра объявлена на голом :root, а тёмная переопределяет
+ * только токены — ни один цвет не задан исключительно внутри media-блока.
+ */
+
+:root {
+    /* Холодный графитовый нейтраль. */
+    --ground: #f1f3f4;
+    --surface: #ffffff;
+    --surface-2: #e7ebed;
+    --ink: #14181b;
+    --ink-2: #4e575e;
+    --ink-3: #7b848b;
+    --rule: #d6dce0;
+    --rule-soft: #e4e9eb;
+
+    /* Тёплый янтарь — единственный акцент, как подсветка приборов. */
+    --accent: #8f5510;
+    --accent-hover: #6f4109;
+    --accent-on: #ffffff;
+    --accent-soft: #f4ebe0;
+
+    --ok: #2c6b3f;
+    --danger: #a32c22;
+    --danger-soft: #fbeceb;
+
+    --shadow: 0 1px 2px rgb(20 24 27 / 6%), 0 4px 12px rgb(20 24 27 / 5%);
+
+    --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-num: "SF Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
+
+    --radius: 4px;
+    --gap: 1rem;
+    --page: 74rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --ground: #111416;
+        --surface: #181c1f;
+        --surface-2: #22282c;
+        --ink: #e7ebed;
+        --ink-2: #a3adb4;
+        --ink-3: #7d868c;
+        --rule: #2b3236;
+        --rule-soft: #22282c;
+
+        --accent: #d99a4e;
+        --accent-hover: #eab168;
+        --accent-on: #14181b;
+        --accent-soft: #2a2118;
+
+        --ok: #6fbf87;
+        --danger: #e58076;
+        --danger-soft: #2c1a18;
+
+        --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 14px rgb(0 0 0 / 30%);
+    }
+}
+
+:root[data-theme="dark"] {
+    --ground: #111416;
+    --surface: #181c1f;
+    --surface-2: #22282c;
+    --ink: #e7ebed;
+    --ink-2: #a3adb4;
+    --ink-3: #7d868c;
+    --rule: #2b3236;
+    --rule-soft: #22282c;
+
+    --accent: #d99a4e;
+    --accent-hover: #eab168;
+    --accent-on: #14181b;
+    --accent-soft: #2a2118;
+
+    --ok: #6fbf87;
+    --danger: #e58076;
+    --danger-soft: #2c1a18;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 14px rgb(0 0 0 / 30%);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+p {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Видимый фокус обязателен: по форме можно пройти с клавиатуры. */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
