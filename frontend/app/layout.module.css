@@ -51,9 +51,12 @@
 
 .main {
     max-width: var(--page);
+    /* Ширина ограничена, но по горизонтали блок центрируется, а по вертикали
+       забирает всё свободное место — это и прижимает подвал к низу. */
+    width: 100%;
     margin: 0 auto;
     padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 4vw, 2rem) 4rem;
-    min-height: 60vh;
+    flex: 1;
 }
 
 .footer {
